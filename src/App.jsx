@@ -149,8 +149,12 @@ function App() {
         const profileData = await profileRes.json();
         const reposData = await reposRes.json();
         
-        // Filter out forks and fetch the full languages object for each repo
-        const filteredRepos = reposData.filter(repo => !repo.fork);
+        // Filter out forks and the portfolio repository itself, then fetch the full languages object for each repo
+        const filteredRepos = reposData.filter(repo => 
+          !repo.fork && 
+          repo.name.toLowerCase() !== 'portfolio' && 
+          repo.name.toLowerCase() !== 'portfolio-website'
+        );
         const reposWithLangs = await Promise.all(
           filteredRepos.map(async (repo) => {
             try {
