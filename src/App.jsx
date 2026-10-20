@@ -352,7 +352,7 @@ export default function App() {
                       </div>
                       <div className="checklist-item">
                         <Check size={15} />
-                        <span><strong>Quality Gate CLI:</strong> Evaluates Macro-F1 $\ge 0.5698$ on unbatched validation data before promotion.</span>
+                        <span><strong>Quality Gate CLI:</strong> Evaluates Macro-F1 &ge; 0.5698 on unbatched validation data before promotion.</span>
                       </div>
                       <div className="checklist-item">
                         <Check size={15} />
@@ -625,7 +625,7 @@ streamlit run app/main.py`}</pre>
                     <h3 className="editorial-project-title">FraudGuard AI &mdash; Imbalanced MLOps</h3>
                     <p className="editorial-lead">
                       End-to-end fraud detection platform built on 284,807 credit card transactions with extreme class imbalance (0.172% fraud prevalence). 
-                      Demonstrates leakage-safe feature scaling, validation decision threshold tuning ($T=0.43$), 
+                      Demonstrates leakage-safe feature scaling, validation decision threshold tuning (threshold T = 0.43), 
                       champion model promotion, a typed FastAPI REST service, and Population Stability Index (PSI) drift monitoring.
                     </p>
 
@@ -655,7 +655,7 @@ streamlit run app/main.py`}</pre>
                       </div>
                       <div className="checklist-item">
                         <Check size={15} />
-                        <span><strong>Val Threshold Tuning:</strong> $T=0.43$ selected on 56,962 validation txns to optimize F1 (Val PR-AUC 0.7693 / Val F1 0.8280).</span>
+                        <span><strong>Val Threshold Tuning:</strong> Threshold T = 0.43 selected on 56,962 validation txns to optimize F1 (Val PR-AUC 0.7693 / Val F1 0.8280).</span>
                       </div>
                       <div className="checklist-item">
                         <Check size={15} />
@@ -1354,7 +1354,7 @@ if psi_score > 0.25:
                 <div className="evidence-tag">EVIDENCE // 03 &bull; EVALUATION RIGOR</div>
                 <h3 className="evidence-title">Validation vs. Test Rigor</h3>
                 <p className="evidence-desc">
-                  Decision thresholds ($T=0.43$) were tuned exclusively on the 20% validation partition (56,962 txns) to maximize validation F1. All reported Precision (80.81%), Recall (81.63%), and PR-AUC (0.8140) are verified on the unseen test partition.
+                  Decision thresholds (threshold T = 0.43) were tuned exclusively on the 20% validation partition (56,962 txns) to maximize validation F1. All reported Precision (80.81%), Recall (81.63%), and PR-AUC (0.8140) are verified on the unseen test partition.
                 </p>
                 <div className="evidence-snippet">
                   <div>TRAIN: 170,883 (60%) &bull; VAL: 56,962 (20%)</div>

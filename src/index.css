@@ -570,6 +570,13 @@ code, pre, .mono {
   letter-spacing: -0.02em;
 }
 
+@media (max-width: 600px) {
+  .editorial-project-title {
+    font-size: 21px;
+    line-height: 1.25;
+  }
+}
+
 .editorial-lead {
   font-size: 14.5px;
   color: var(--text-secondary);
