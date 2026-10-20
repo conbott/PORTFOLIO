@@ -23,6 +23,14 @@ import {
 } from 'lucide-react';
 import './index.css';
 
+// Phase 2 Motion & Interactive Components
+import AnimatedStat from './components/AnimatedStat';
+import HeroAtmosphereCanvas from './components/HeroAtmosphereCanvas';
+import HeroPipelineVisual from './components/HeroPipelineVisual';
+import ConfusionMatrixInspector from './components/ConfusionMatrixInspector';
+import LifecycleFlow from './components/LifecycleFlow';
+import RevealOnScroll from './components/RevealOnScroll';
+
 // SVG GitHub icon component
 const GithubIcon = ({ size = 18, className = "" }) => (
   <svg
@@ -72,6 +80,7 @@ export default function App() {
   
   // Interactive system spec in hero
   const [activeSpec, setActiveSpec] = useState(0);
+  const [consoleMode, setConsoleMode] = useState('spec'); // 'spec' | 'pipeline'
   
   // Archive toggle
   const [showArchive, setShowArchive] = useState(false);
@@ -191,27 +200,30 @@ export default function App() {
       <main>
         {/* 1. HERO SECTION: ASYMMETRIC ENGINEERING STATEMENT & SPEC */}
         <section className="hero-section">
+          {/* Ambient vector canvas representing connected ML telemetry */}
+          <HeroAtmosphereCanvas />
+
           <div className="container">
             <div className="hero-grid">
               
               {/* Left Column: Statement & CTAs */}
               <div>
-                <div className="hero-badge">
+                <div className="hero-badge hero-animate-1">
                   <span className="brand-dot"></span>
                   <span>B.Tech Computer Science &bull; Class of 2026</span>
                 </div>
 
-                <h1 className="hero-headline">
+                <h1 className="hero-headline hero-animate-2">
                   I build machine learning systems that are <span className="highlight">measurable</span>, <span className="highlight">reproducible</span>, and <span className="highlight">deployable</span>.
                 </h1>
 
-                <p className="hero-lede">
+                <p className="hero-lede hero-animate-3">
                   Computer Science graduate specializing in ML engineering, MLOps, and dependable software. 
                   Experienced in fine-tuning deep learning vision models, optimizing decision thresholds for imbalanced financial data, 
                   building automated promotion gates with rollback guarantees, and serving low-latency REST APIs.
                 </p>
 
-                <div className="hero-actions">
+                <div className="hero-actions hero-animate-4">
                   <a href="#projects" className="btn btn-primary">
                     Explore Featured Work <ArrowRight size={14} />
                   </a>
@@ -233,24 +245,24 @@ export default function App() {
                   </a>
                 </div>
 
-                <div className="hero-meta-bar">
+                <div className="hero-meta-bar hero-animate-5">
                   <div className="hero-meta-item">
                     <span className="mono-tag">[ 01 ]</span>
-                    <span><strong>3</strong> Production Repositories</span>
+                    <span><strong><AnimatedStat value="3" /></strong> Production Repositories</span>
                   </div>
                   <div className="hero-meta-item">
                     <span className="mono-tag">[ 02 ]</span>
-                    <span><strong>68</strong> Automated CI Tests</span>
+                    <span><strong><AnimatedStat value="68" /></strong> Automated CI Tests</span>
                   </div>
                   <div className="hero-meta-item">
                     <span className="mono-tag">[ 03 ]</span>
-                    <span><strong>0%</strong> Validation Leakage</span>
+                    <span><strong><AnimatedStat value="0" suffix="%" /></strong> Validation Leakage</span>
                   </div>
                 </div>
               </div>
 
               {/* Right Column: Engineering System Spec Console */}
-              <div>
+              <div className="hero-animate-console">
                 <div className="hero-spec-console">
                   <div className="console-header">
                     <div className="console-dots">
@@ -258,34 +270,61 @@ export default function App() {
                       <span className="console-dot"></span>
                       <span className="console-dot"></span>
                     </div>
-                    <span className="console-title">// ML SYSTEM SPECIFICATION</span>
+
+                    <div className="console-nav-tabs" role="tablist" aria-label="Console Modes">
+                      <button 
+                        type="button"
+                        role="tab"
+                        aria-selected={consoleMode === 'spec'}
+                        className={`console-tab-btn ${consoleMode === 'spec' ? 'active' : ''}`}
+                        onClick={() => setConsoleMode('spec')}
+                      >
+                        // SPECIFICATION
+                      </button>
+                      <button 
+                        type="button"
+                        role="tab"
+                        aria-selected={consoleMode === 'pipeline'}
+                        className={`console-tab-btn ${consoleMode === 'pipeline' ? 'active' : ''}`}
+                        onClick={() => setConsoleMode('pipeline')}
+                      >
+                        // PIPELINE FLOW
+                      </button>
+                    </div>
+
                     <span className="console-status">
                       <span className="brand-dot"></span> VERIFIED
                     </span>
                   </div>
 
-                  <div className="console-body">
-                    {systemSpecs.map((spec, index) => (
-                      <div 
-                        key={spec.num}
-                        className={`spec-entry ${activeSpec === index ? 'active' : ''}`}
-                        onClick={() => setActiveSpec(index)}
-                      >
-                        <div className="spec-meta">
-                          <span className="spec-num">{spec.num} // {spec.name}</span>
-                          <span className="spec-tool">{spec.tool}</span>
-                        </div>
-                        <p className="spec-desc">{spec.desc}</p>
+                  {consoleMode === 'spec' ? (
+                    <>
+                      <div className="console-body">
+                        {systemSpecs.map((spec, index) => (
+                          <div 
+                            key={spec.num}
+                            className={`spec-entry ${activeSpec === index ? 'active' : ''}`}
+                            onClick={() => setActiveSpec(index)}
+                          >
+                            <div className="spec-meta">
+                              <span className="spec-num">{spec.num} // {spec.name}</span>
+                              <span className="spec-tool">{spec.tool}</span>
+                            </div>
+                            <p className="spec-desc">{spec.desc}</p>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
 
-                  <div className="console-footer">
-                    <Sparkles size={14} color="var(--accent-leaf)" style={{ flexShrink: 0 }} />
-                    <code style={{ fontSize: '11px', color: 'var(--accent-leaf)' }}>
-                      {systemSpecs[activeSpec].snippet}
-                    </code>
-                  </div>
+                      <div className="console-footer">
+                        <Sparkles size={14} color="var(--accent-leaf)" style={{ flexShrink: 0 }} />
+                        <code style={{ fontSize: '11px', color: 'var(--accent-leaf)' }}>
+                          {systemSpecs[activeSpec].snippet}
+                        </code>
+                      </div>
+                    </>
+                  ) : (
+                    <HeroPipelineVisual />
+                  )}
                 </div>
               </div>
 
@@ -328,19 +367,19 @@ export default function App() {
 
                     <div className="editorial-stat-row">
                       <div className="stat-item">
-                        <span className="stat-val">196</span>
+                        <span className="stat-val"><AnimatedStat value="196" /></span>
                         <span className="stat-lbl">Classes</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-val highlight">57.34%</span>
+                        <span className="stat-val highlight"><AnimatedStat value="57.34" suffix="%" /></span>
                         <span className="stat-lbl">Val Acc</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-val highlight">0.5698</span>
+                        <span className="stat-val highlight"><AnimatedStat value="0.5698" /></span>
                         <span className="stat-lbl">F1 Gate</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-val">35</span>
+                        <span className="stat-val"><AnimatedStat value="35" /></span>
                         <span className="stat-lbl">CI Tests</span>
                       </div>
                     </div>
@@ -631,19 +670,19 @@ streamlit run app/main.py`}</pre>
 
                     <div className="editorial-stat-row">
                       <div className="stat-item">
-                        <span className="stat-val highlight">0.8140</span>
+                        <span className="stat-val highlight"><AnimatedStat value="0.8140" /></span>
                         <span className="stat-lbl">Test PR-AUC</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-val highlight">0.0334%</span>
+                        <span className="stat-val highlight"><AnimatedStat value="0.0334" suffix="%" /></span>
                         <span className="stat-lbl">Test FPR</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-val">80.81%</span>
+                        <span className="stat-val"><AnimatedStat value="80.81" suffix="%" /></span>
                         <span className="stat-lbl">Precision</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-val">81.63%</span>
+                        <span className="stat-val"><AnimatedStat value="81.63" suffix="%" /></span>
                         <span className="stat-lbl">Recall</span>
                       </div>
                     </div>
@@ -695,57 +734,9 @@ streamlit run app/main.py`}</pre>
                     </div>
                   </div>
 
-                  {/* Right: Verified 2x2 Confusion Matrix Centerpiece */}
+                  {/* Right: Interactive 2x2 Confusion Matrix Inspector */}
                   <div>
-                    <div className="editorial-artifact-frame">
-                      <div className="artifact-titlebar">
-                        <div className="console-dots">
-                          <span className="console-dot"></span>
-                          <span className="console-dot"></span>
-                          <span className="console-dot"></span>
-                        </div>
-                        <span>TEST CONFUSION MATRIX (N = 56,962 at T = 0.43)</span>
-                        <span className="mono-tag">HELD-OUT TEST</span>
-                      </div>
-                      <div className="artifact-content">
-                        <div className="confusion-matrix-grid">
-                          <div className="cm-cell header"></div>
-                          <div className="cm-cell header">Pred. Negative</div>
-                          <div className="cm-cell header">Pred. Positive</div>
-
-                          <div className="cm-cell header" style={{ justifyContent: 'flex-start' }}>Actual Neg.</div>
-                          <div className="cm-cell tn">
-                            <div className="cm-val">56,845</div>
-                            <div className="cm-label">True Negative (TN)</div>
-                          </div>
-                          <div className="cm-cell">
-                            <div className="cm-val" style={{ color: 'var(--color-warning)' }}>19</div>
-                            <div className="cm-label">False Positive (FP)</div>
-                          </div>
-
-                          <div className="cm-cell header" style={{ justifyContent: 'flex-start' }}>Actual Pos.</div>
-                          <div className="cm-cell">
-                            <div className="cm-val" style={{ color: 'var(--color-danger)' }}>18</div>
-                            <div className="cm-label">False Negative (FN)</div>
-                          </div>
-                          <div className="cm-cell tp">
-                            <div className="cm-val">80</div>
-                            <div className="cm-label">True Positive (TP)</div>
-                          </div>
-                        </div>
-
-                        <div style={{ marginTop: '12px', padding: '10px 12px', background: 'var(--bg-surface-alt)', borderRadius: 'var(--radius-xs)', border: '1px solid var(--border-subtle)' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-                            <span>FPR: 0.0334% (19 / 56,864)</span>
-                            <span style={{ color: 'var(--accent-leaf)' }}>RECALL: 81.63% (80 / 98)</span>
-                          </div>
-                          <div style={{ fontSize: '11.5px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                            Across 56,864 legitimate transactions, only 19 produced false alarms while catching 80 of 98 fraud events. 
-                            Accuracy (99.93%) is deceptive; evaluation relies strictly on PR-AUC (0.8140) and FPR.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <ConfusionMatrixInspector />
                   </div>
                 </div>
 
@@ -962,19 +953,19 @@ python -m uvicorn src.api.app:app --host 127.0.0.1 --port 8000`}</pre>
 
                     <div className="editorial-stat-row">
                       <div className="stat-item">
-                        <span className="stat-val highlight">90.92%</span>
+                        <span className="stat-val highlight"><AnimatedStat value="90.92" suffix="%" /></span>
                         <span className="stat-lbl">Test Acc</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-val highlight">0.968</span>
+                        <span className="stat-val highlight"><AnimatedStat value="0.968" /></span>
                         <span className="stat-lbl">ROC-AUC</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-val">91.06%</span>
+                        <span className="stat-val"><AnimatedStat value="91.06" suffix="%" /></span>
                         <span className="stat-lbl">F1-Score</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-val">0.49s</span>
+                        <span className="stat-val"><AnimatedStat value="0.49" suffix="s" /></span>
                         <span className="stat-lbl">Train Latency</span>
                       </div>
                     </div>
@@ -1217,114 +1208,40 @@ python -m streamlit run app/ui.py`}</pre>
         {/* 3. ENGINEERING METHODOLOGY: THE PRODUCTION ML LIFECYCLE */}
         <section id="methodology" className="section-spacer" style={{ background: 'var(--bg-surface)' }}>
           <div className="container">
-            <div className="editorial-eyebrow">
-              <ShieldAlert size={13} /> Architectural Principles
-            </div>
-            <h2 className="editorial-section-title">The Production ML Lifecycle</h2>
-            <p className="editorial-section-desc">
-              Moving beyond optimistic Jupyter notebook accuracy. How models are trained, gated, deployed, and monitored for real-world resilience.
-            </p>
-
-            <div className="methodology-flow">
-              <div className="methodology-item">
-                <div className="methodology-meta">
-                  <span className="methodology-num">01 // PREPARATION</span>
-                  <span className="methodology-title">Leakage-Safe Scaling</span>
-                  <span className="methodology-tool">RobustScaler & Log1p</span>
-                </div>
-                <div className="methodology-content">
-                  <p>
-                    Data leakage is the #1 cause of catastrophic production drops. Feature scalers, frequency encoders, and text tokenizers 
-                    are fit strictly on training partitions. Validation and test samples never bleed into preprocessing transformations.
-                  </p>
-                  <div className="code-snippet" style={{ margin: 0 }}>
-                    <pre>{`# Fit strictly on train; transform val and test partitions independently
-scaler = RobustScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_val_scaled = scaler.transform(X_val)    # Zero validation bleed`}</pre>
-                  </div>
-                </div>
+            <RevealOnScroll>
+              <div className="editorial-eyebrow">
+                <ShieldAlert size={13} /> Architectural Principles
               </div>
+              <h2 className="editorial-section-title">The Production ML Lifecycle</h2>
+              <p className="editorial-section-desc">
+                Moving beyond optimistic Jupyter notebook accuracy. How models are trained, gated, deployed, and monitored for real-world resilience.
+              </p>
+            </RevealOnScroll>
 
-              <div className="methodology-item">
-                <div className="methodology-meta">
-                  <span className="methodology-num">02 // EVALUATION</span>
-                  <span className="methodology-title">Objective Quality Gates</span>
-                  <span className="methodology-tool">Automated CLI & Macro-F1</span>
-                </div>
-                <div className="methodology-content">
-                  <p>
-                    Overwriting serving models without an objective evaluation barrier invites regressions. 
-                    Candidate models must exceed baseline macro-F1 on held-out validation sets before promotion filesystems are touched. 
-                    Promotions execute atomically via <code>os.replace</code> with SHA-256 audit trails and one-command CLI rollback.
-                  </p>
-                  <div className="code-snippet" style={{ margin: 0 }}>
-                    <pre>{`# Rejects underperforming models; atomic promotion on pass
-if candidate_macro_f1 >= baseline_macro_f1:
-    shutil.copy2(active_model, backup_path)
-    os.replace(candidate_model, active_model)  # Atomic filesystem swap`}</pre>
-                  </div>
-                </div>
-              </div>
-
-              <div className="methodology-item">
-                <div className="methodology-meta">
-                  <span className="methodology-num">03 // SERVING</span>
-                  <span className="methodology-title">Typed API Contracts</span>
-                  <span className="methodology-tool">FastAPI & Pydantic V2</span>
-                </div>
-                <div className="methodology-content">
-                  <p>
-                    Production endpoints enforce strict Pydantic V2 schema contracts, rejecting malformed, missing, or out-of-range features. 
-                    Models output calibrated class probabilities for downstream thresholding and log latency percentiles.
-                  </p>
-                  <div className="code-snippet" style={{ margin: 0 }}>
-                    <pre>{`class TransactionPayload(BaseModel):
-    Time: float
-    Amount: float = Field(..., ge=0.0, le=50000.0)
-    V1: float; V2: float; ... # Strictly typed feature validation`}</pre>
-                  </div>
-                </div>
-              </div>
-
-              <div className="methodology-item">
-                <div className="methodology-meta">
-                  <span className="methodology-num">04 // TELEMETRY</span>
-                  <span className="methodology-title">Drift & Distribution Shift</span>
-                  <span className="methodology-tool">PSI & Two-Sample KS Tests</span>
-                </div>
-                <div className="methodology-content">
-                  <p>
-                    Incoming inference batches are stored in telemetry logs to compute Population Stability Index (PSI) 
-                    and Kolmogorov-Smirnov (KS) tests against baseline reference distributions, triggering automated alerts when distributions drift.
-                  </p>
-                  <div className="code-snippet" style={{ margin: 0 }}>
-                    <pre>{`# Population Stability Index (PSI) drift alert
-if psi_score > 0.25:
-    logger.warning(f"Feature drift detected: PSI = {psi_score:.4f} > 0.25 threshold")`}</pre>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <RevealOnScroll delay={100}>
+              <LifecycleFlow />
+            </RevealOnScroll>
           </div>
         </section>
 
         {/* 4. TECHNICAL EVIDENCE & VERIFICATION ARTIFACTS */}
         <section id="evidence" className="section-spacer">
           <div className="container">
-            <div className="editorial-eyebrow">
-              <CheckCircle2 size={13} /> Concrete Evidence
-            </div>
-            <h2 className="editorial-section-title">Technical Evidence & Artifacts</h2>
-            <p className="editorial-section-desc">
-              Direct verification artifacts demonstrating code quality, automated test coverage, and reproducible evaluation standards.
-            </p>
+            <RevealOnScroll>
+              <div className="editorial-eyebrow">
+                <CheckCircle2 size={13} /> Concrete Evidence
+              </div>
+              <h2 className="editorial-section-title">Technical Evidence & Artifacts</h2>
+              <p className="editorial-section-desc">
+                Direct verification artifacts demonstrating code quality, automated test coverage, and reproducible evaluation standards.
+              </p>
+            </RevealOnScroll>
 
             <div className="evidence-grid">
               {/* Evidence 1: Automated CI Tests */}
-              <div className="evidence-card">
+              <RevealOnScroll className="evidence-card" delay={50}>
                 <div className="evidence-tag">EVIDENCE // 01 &bull; AUTOMATED CI</div>
-                <h3 className="evidence-title">68 Automated CI Tests Passing</h3>
+                <h3 className="evidence-title"><AnimatedStat value="68" /> Automated CI Tests Passing</h3>
                 <p className="evidence-desc">
                   Every commit triggers automated test suites in GitHub Actions CI across Python 3.10 and 3.11 runners, validating preprocessing transformers, forward pass tensor shapes, quality gates, and FastAPI REST endpoints.
                 </p>
@@ -1333,10 +1250,10 @@ if psi_score > 0.25:
                   <div style={{ marginTop: '4px' }}>Fraud-Guard-AI: <strong>33 tests passed</strong> (&lt; 8s)</div>
                   <div style={{ marginTop: '6px', color: 'var(--accent-leaf)' }}>STATUS: 100% PASS RATE IN CI</div>
                 </div>
-              </div>
+              </RevealOnScroll>
 
               {/* Evidence 2: Promotion Audit Ledger */}
-              <div className="evidence-card">
+              <RevealOnScroll className="evidence-card" delay={150}>
                 <div className="evidence-tag">EVIDENCE // 02 &bull; AUDIT & ROLLBACK</div>
                 <h3 className="evidence-title">Cryptographic Promotion Audit</h3>
                 <p className="evidence-desc">
@@ -1347,10 +1264,10 @@ if psi_score > 0.25:
                   <div style={{ marginTop: '4px' }}>ACTION: <code>os.replace(cand, prod)</code></div>
                   <div style={{ marginTop: '6px', color: 'var(--accent-leaf)' }}>ROLLBACK CLI GUARANTEE</div>
                 </div>
-              </div>
+              </RevealOnScroll>
 
               {/* Evidence 3: Strict Val vs Test Partition */}
-              <div className="evidence-card">
+              <RevealOnScroll className="evidence-card" delay={250}>
                 <div className="evidence-tag">EVIDENCE // 03 &bull; EVALUATION RIGOR</div>
                 <h3 className="evidence-title">Validation vs. Test Rigor</h3>
                 <p className="evidence-desc">
@@ -1361,7 +1278,7 @@ if psi_score > 0.25:
                   <div style={{ marginTop: '4px' }}>HELD-OUT TEST: 56,962 (20%)</div>
                   <div style={{ marginTop: '6px', color: 'var(--accent-leaf)' }}>ZERO OPTIMISTIC LEAKAGE</div>
                 </div>
-              </div>
+              </RevealOnScroll>
             </div>
           </div>
         </section>
@@ -1369,94 +1286,103 @@ if psi_score > 0.25:
         {/* 5. EXPERIENCE & EDUCATION: HAIRLINE EDITORIAL TIMELINE */}
         <section id="experience" className="section-spacer" style={{ background: 'var(--bg-surface)' }}>
           <div className="container">
-            <div className="editorial-eyebrow">
-              <Activity size={13} /> Practical Experience
-            </div>
-            <h2 className="editorial-section-title">Experience & Education</h2>
-            <p className="editorial-section-desc">
-              Verified software internships and academic foundation in Computer Science and Engineering.
-            </p>
+            <RevealOnScroll>
+              <div className="editorial-eyebrow">
+                <Activity size={13} /> Practical Experience
+              </div>
+              <h2 className="editorial-section-title">Experience & Education</h2>
+              <p className="editorial-section-desc">
+                Verified software internships and academic foundation in Computer Science and Engineering.
+              </p>
+            </RevealOnScroll>
 
-            <div className="editorial-timeline">
-              {/* Internship 1 */}
-              <div className="editorial-timeline-item">
-                <div>
-                  <div className="timeline-time">June 2025</div>
-                  <div className="timeline-company">NextGenPro Innovations</div>
-                  <div className="timeline-place">Ernakulam, Kerala &bull; On-site</div>
+            <RevealOnScroll delay={80}>
+              <div className="editorial-timeline">
+                {/* Internship 1 */}
+                <div className="editorial-timeline-item">
+                  <div>
+                    <div className="timeline-time">June 2025</div>
+                    <div className="timeline-company">NextGenPro Innovations</div>
+                    <div className="timeline-place">Ernakulam, Kerala &bull; On-site</div>
+                  </div>
+                  <div>
+                    <div className="timeline-role-title">Data & Machine Learning Intern</div>
+                    <ul className="timeline-bullets">
+                      <li>Audited multi-class numerical and image datasets across feature distributions, identifying missing values, label anomalies, and extreme outliers using Python and NumPy.</li>
+                      <li>Engineered data cleaning and preprocessing routines, standardizing feature scales and formatting structured arrays to establish clean baseline data for downstream modeling pipelines.</li>
+                    </ul>
+                  </div>
                 </div>
-                <div>
-                  <div className="timeline-role-title">Data & Machine Learning Intern</div>
-                  <ul className="timeline-bullets">
-                    <li>Audited multi-class numerical and image datasets across feature distributions, identifying missing values, label anomalies, and extreme outliers using Python and NumPy.</li>
-                    <li>Engineered data cleaning and preprocessing routines, standardizing feature scales and formatting structured arrays to establish clean baseline data for downstream modeling pipelines.</li>
-                  </ul>
+
+                {/* Internship 2 */}
+                <div className="editorial-timeline-item">
+                  <div>
+                    <div className="timeline-time">Oct. 2024 &ndash; Dec. 2024</div>
+                    <div className="timeline-company">Corizo (in collab. with Wipro)</div>
+                    <div className="timeline-place">Remote</div>
+                  </div>
+                  <div>
+                    <div className="timeline-role-title">AI Project Intern</div>
+                    <ul className="timeline-bullets">
+                      <li>Evaluated baseline classification algorithms on structured clinical healthcare records across 13 physiological attributes, comparing model sensitivity to identify diagnostic risk patterns.</li>
+                      <li>Built an interactive desktop prototype application using Python and Tkinter, integrating feature scaling logic to accept patient metrics and output risk classifications in real time.</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Education */}
+                <div className="editorial-timeline-item">
+                  <div>
+                    <div className="timeline-time">2022 &ndash; 2026</div>
+                    <div className="timeline-company">APJ Abdul Kalam Technological Univ.</div>
+                    <div className="timeline-place">Kerala, India</div>
+                  </div>
+                  <div>
+                    <div className="timeline-role-title">Bachelor of Technology &bull; Computer Science and Engineering</div>
+                    <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', marginTop: '6px' }}>
+                      <strong>Relevant Coursework:</strong> Machine Learning, Deep Learning, Data Structures & Algorithms, Database Management Systems (DBMS), Operating Systems, Computer Networks, Software Engineering.
+                    </p>
+                  </div>
                 </div>
               </div>
-
-              {/* Internship 2 */}
-              <div className="editorial-timeline-item">
-                <div>
-                  <div className="timeline-time">Oct. 2024 &ndash; Dec. 2024</div>
-                  <div className="timeline-company">Corizo (in collab. with Wipro)</div>
-                  <div className="timeline-place">Remote</div>
-                </div>
-                <div>
-                  <div className="timeline-role-title">AI Project Intern</div>
-                  <ul className="timeline-bullets">
-                    <li>Evaluated baseline classification algorithms on structured clinical healthcare records across 13 physiological attributes, comparing model sensitivity to identify diagnostic risk patterns.</li>
-                    <li>Built an interactive desktop prototype application using Python and Tkinter, integrating feature scaling logic to accept patient metrics and output risk classifications in real time.</li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Education */}
-              <div className="editorial-timeline-item">
-                <div>
-                  <div className="timeline-time">2022 &ndash; 2026</div>
-                  <div className="timeline-company">APJ Abdul Kalam Technological Univ.</div>
-                  <div className="timeline-place">Kerala, India</div>
-                </div>
-                <div>
-                  <div className="timeline-role-title">Bachelor of Technology &bull; Computer Science and Engineering</div>
-                  <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', marginTop: '6px' }}>
-                    <strong>Relevant Coursework:</strong> Machine Learning, Deep Learning, Data Structures & Algorithms, Database Management Systems (DBMS), Operating Systems, Computer Networks, Software Engineering.
-                  </p>
-                </div>
-              </div>
-            </div>
+            </RevealOnScroll>
 
             {/* Certifications & Programs */}
-            <div style={{ marginTop: '40px', padding: '20px 24px', background: 'var(--bg-surface-alt)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xs)' }}>
-              <div className="mono-tag" style={{ marginBottom: '10px' }}>
-                <CheckCircle2 size={14} /> Completed Technical Programs
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-                <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>AI & Machine Learning Program</strong> &bull; Corizo / Wipro (Dec 2024)<br/>
-                  <span style={{ color: 'var(--text-muted)' }}>Supervised & unsupervised learning, statistical testing, and predictive modeling delivery.</span>
+            <RevealOnScroll delay={150}>
+              <div style={{ marginTop: '40px', padding: '20px 24px', background: 'var(--bg-surface-alt)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xs)' }}>
+                <div className="mono-tag" style={{ marginBottom: '10px' }}>
+                  <CheckCircle2 size={14} /> Completed Technical Programs
                 </div>
-                <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>Robotics, AI & ML Workshop</strong> &bull; Shristi Campus, Technopark (June 2023)<br/>
-                  <span style={{ color: 'var(--text-muted)' }}>Foundations of artificial intelligence, robotic control interfaces, and ML fundamentals.</span>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                    <strong style={{ color: 'var(--text-primary)' }}>AI & Machine Learning Program</strong> &bull; Corizo / Wipro (Dec 2024)<br/>
+                    <span style={{ color: 'var(--text-muted)' }}>Supervised & unsupervised learning, statistical testing, and predictive modeling delivery.</span>
+                  </div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                    <strong style={{ color: 'var(--text-primary)' }}>Robotics, AI & ML Workshop</strong> &bull; Shristi Campus, Technopark (June 2023)<br/>
+                    <span style={{ color: 'var(--text-muted)' }}>Foundations of artificial intelligence, robotic control interfaces, and ML fundamentals.</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </RevealOnScroll>
           </div>
         </section>
 
         {/* 6. CURATED TECHNICAL TOOLKIT */}
         <section id="skills" className="section-spacer">
           <div className="container">
-            <div className="editorial-eyebrow">
-              <Terminal size={13} /> Engineering Stack
-            </div>
-            <h2 className="editorial-section-title">Curated Technical Toolkit</h2>
-            <p className="editorial-section-desc">
-              Technologies and tools actively implemented across verified repositories, CI pipelines, and serving services.
-            </p>
+            <RevealOnScroll>
+              <div className="editorial-eyebrow">
+                <Terminal size={13} /> Engineering Stack
+              </div>
+              <h2 className="editorial-section-title">Curated Technical Toolkit</h2>
+              <p className="editorial-section-desc">
+                Technologies and tools actively implemented across verified repositories, CI pipelines, and serving services.
+              </p>
+            </RevealOnScroll>
 
-            <div className="editorial-toolkit-grid">
+            <RevealOnScroll delay={100}>
+              <div className="editorial-toolkit-grid">
               <div className="toolkit-block">
                 <div className="toolkit-header">// 01 MODEL DEVELOPMENT & DEEP LEARNING</div>
                 <div className="toolkit-tags">
@@ -1515,6 +1441,7 @@ if psi_score > 0.25:
                 </div>
               </div>
             </div>
+            </RevealOnScroll>
 
             {/* Extended Projects Archive Drawer */}
             <div style={{ marginTop: '56px', borderTop: '1px solid var(--border-subtle)', paddingTop: '28px' }}>
@@ -1608,67 +1535,69 @@ if psi_score > 0.25:
         {/* 7. INTENTIONAL CONTACT & FOOTER */}
         <section id="contact" className="editorial-contact" style={{ background: 'var(--bg-surface)' }}>
           <div className="container">
-            <div className="contact-layout">
-              <div>
-                <div className="editorial-eyebrow">
-                  <Mail size={13} /> Open For Opportunities
+            <RevealOnScroll>
+              <div className="contact-layout">
+                <div>
+                  <div className="editorial-eyebrow">
+                    <Mail size={13} /> Open For Opportunities
+                  </div>
+                  <h2 className="editorial-section-title" style={{ marginBottom: '14px' }}>
+                    Let's Discuss Engineering Roles
+                  </h2>
+                  <p className="editorial-section-desc" style={{ marginBottom: '24px' }}>
+                    I am actively seeking machine learning engineering, MLOps, and backend software engineering roles 
+                    where I can contribute to reliable, measurable, and production-ready systems.
+                  </p>
+                  <div style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                    LOCATION: Kerala, India &bull; Open to On-site, Hybrid & Remote Roles
+                  </div>
                 </div>
-                <h2 className="editorial-section-title" style={{ marginBottom: '14px' }}>
-                  Let's Discuss Engineering Roles
-                </h2>
-                <p className="editorial-section-desc" style={{ marginBottom: '24px' }}>
-                  I am actively seeking machine learning engineering, MLOps, and backend software engineering roles 
-                  where I can contribute to reliable, measurable, and production-ready systems.
-                </p>
-                <div style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                  LOCATION: Kerala, India &bull; Open to On-site, Hybrid & Remote Roles
+
+                <div className="contact-buttons-col">
+                  <a href="mailto:stevesamuel.cse@gmail.com" className="contact-link-row">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Mail size={16} color="var(--accent-leaf)" />
+                      <span>stevesamuel.cse@gmail.com</span>
+                    </div>
+                    <ArrowRight size={14} color="var(--text-muted)" />
+                  </a>
+
+                  <a href="tel:+918848172665" className="contact-link-row">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Phone size={16} color="var(--accent-leaf)" />
+                      <span>+91 8848172665</span>
+                    </div>
+                    <ArrowRight size={14} color="var(--text-muted)" />
+                  </a>
+
+                  <a 
+                    href="https://linkedin.com/in/steve-samuel-a10534343" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="contact-link-row"
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <LinkedinIcon size={16} className="" />
+                      <span>LinkedIn &bull; steve-samuel-a10534343</span>
+                    </div>
+                    <ExternalLink size={14} color="var(--text-muted)" />
+                  </a>
+
+                  <a 
+                    href="/Resume.pdf" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="contact-link-row"
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <FileText size={16} color="var(--accent-leaf)" />
+                      <span>Download Official Résumé (PDF)</span>
+                    </div>
+                    <ExternalLink size={14} color="var(--text-muted)" />
+                  </a>
                 </div>
               </div>
-
-              <div className="contact-buttons-col">
-                <a href="mailto:stevesamuel.cse@gmail.com" className="contact-link-row">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Mail size={16} color="var(--accent-leaf)" />
-                    <span>stevesamuel.cse@gmail.com</span>
-                  </div>
-                  <ArrowRight size={14} color="var(--text-muted)" />
-                </a>
-
-                <a href="tel:+918848172665" className="contact-link-row">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Phone size={16} color="var(--accent-leaf)" />
-                    <span>+91 8848172665</span>
-                  </div>
-                  <ArrowRight size={14} color="var(--text-muted)" />
-                </a>
-
-                <a 
-                  href="https://linkedin.com/in/steve-samuel-a10534343" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="contact-link-row"
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <LinkedinIcon size={16} className="" />
-                    <span>LinkedIn &bull; steve-samuel-a10534343</span>
-                  </div>
-                  <ExternalLink size={14} color="var(--text-muted)" />
-                </a>
-
-                <a 
-                  href="/Resume.pdf" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="contact-link-row"
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <FileText size={16} color="var(--accent-leaf)" />
-                    <span>Download Official Résumé (PDF)</span>
-                  </div>
-                  <ExternalLink size={14} color="var(--text-muted)" />
-                </a>
-              </div>
-            </div>
+            </RevealOnScroll>
           </div>
         </section>
       </main>
