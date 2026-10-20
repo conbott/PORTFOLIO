@@ -75,6 +75,43 @@ export default function App() {
   // Archive toggle
   const [showArchive, setShowArchive] = useState(false);
 
+  // Tab definitions for accessible keyboard navigation (ArrowLeft / ArrowRight / Home / End)
+  const tabsA = ['lifecycle', 'quality-gate', 'metrics', 'interface', 'repro'];
+  const tabsB = ['imbalanced', 'thresholds', 'api', 'repro'];
+  const tabsC = ['nlp', 'benchmarks', 'api', 'repro'];
+
+  const handleTabKeyDown = (e, projectKey) => {
+    const tabMap = { A: tabsA, B: tabsB, C: tabsC };
+    const currentTab = projectKey === 'A' ? activeTabA : projectKey === 'B' ? activeTabB : activeTabC;
+    const setTab = projectKey === 'A' ? setActiveTabA : projectKey === 'B' ? setActiveTabB : setActiveTabC;
+    const tabs = tabMap[projectKey];
+    const currentIndex = tabs.indexOf(currentTab);
+
+    let nextIndex = null;
+    if (e.key === 'ArrowRight') {
+      nextIndex = (currentIndex + 1) % tabs.length;
+    } else if (e.key === 'ArrowLeft') {
+      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    } else if (e.key === 'Home') {
+      nextIndex = 0;
+    } else if (e.key === 'End') {
+      nextIndex = tabs.length - 1;
+    }
+
+    if (nextIndex !== null) {
+      e.preventDefault();
+      const nextTab = tabs[nextIndex];
+      setTab(nextTab);
+      setTimeout(() => {
+        const nextButton = document.getElementById(`tab-${projectKey.toLowerCase()}-${nextTab}`);
+        if (nextButton) {
+          nextButton.focus();
+          nextButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        }
+      }, 0);
+    }
+  };
+
   const lifecycleStages = [
     {
       num: "01",
@@ -300,42 +337,78 @@ export default function App() {
                 </div>
 
                 {/* Case Study Tabs */}
-                <div className="case-tabs">
-                  <button 
-                    className={`tab-btn ${activeTabA === 'lifecycle' ? 'active' : ''}`}
-                    onClick={() => setActiveTabA('lifecycle')}
+                <div className="case-tabs-wrapper">
+                  <div 
+                    className="case-tabs"
+                    role="tablist"
+                    aria-label="Automotive Image Classifier Case Study Sections"
                   >
-                    <Cpu size={14} /> Lifecycle & Architecture
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabA === 'quality-gate' ? 'active' : ''}`}
-                    onClick={() => setActiveTabA('quality-gate')}
-                  >
-                    <ShieldAlert size={14} /> Quality Gate & Rollback
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabA === 'metrics' ? 'active' : ''}`}
-                    onClick={() => setActiveTabA('metrics')}
-                  >
-                    <BarChart3 size={14} /> Benchmark Evaluation
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabA === 'interface' ? 'active' : ''}`}
-                    onClick={() => setActiveTabA('interface')}
-                  >
-                    <ImageIcon size={14} /> Interface & App Preview
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabA === 'repro' ? 'active' : ''}`}
-                    onClick={() => setActiveTabA('repro')}
-                  >
-                    <Terminal size={14} /> Reproduction & CI (35 Tests)
-                  </button>
+                    <button 
+                      id="tab-a-lifecycle"
+                      role="tab"
+                      aria-selected={activeTabA === 'lifecycle'}
+                      aria-controls="panel-a-lifecycle"
+                      tabIndex={activeTabA === 'lifecycle' ? 0 : -1}
+                      className={`tab-btn ${activeTabA === 'lifecycle' ? 'active' : ''}`}
+                      onClick={() => setActiveTabA('lifecycle')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'A')}
+                    >
+                      <Cpu size={14} /> Lifecycle & Architecture
+                    </button>
+                    <button 
+                      id="tab-a-quality-gate"
+                      role="tab"
+                      aria-selected={activeTabA === 'quality-gate'}
+                      aria-controls="panel-a-quality-gate"
+                      tabIndex={activeTabA === 'quality-gate' ? 0 : -1}
+                      className={`tab-btn ${activeTabA === 'quality-gate' ? 'active' : ''}`}
+                      onClick={() => setActiveTabA('quality-gate')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'A')}
+                    >
+                      <ShieldAlert size={14} /> Quality Gate & Rollback
+                    </button>
+                    <button 
+                      id="tab-a-metrics"
+                      role="tab"
+                      aria-selected={activeTabA === 'metrics'}
+                      aria-controls="panel-a-metrics"
+                      tabIndex={activeTabA === 'metrics' ? 0 : -1}
+                      className={`tab-btn ${activeTabA === 'metrics' ? 'active' : ''}`}
+                      onClick={() => setActiveTabA('metrics')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'A')}
+                    >
+                      <BarChart3 size={14} /> Benchmark Evaluation
+                    </button>
+                    <button 
+                      id="tab-a-interface"
+                      role="tab"
+                      aria-selected={activeTabA === 'interface'}
+                      aria-controls="panel-a-interface"
+                      tabIndex={activeTabA === 'interface' ? 0 : -1}
+                      className={`tab-btn ${activeTabA === 'interface' ? 'active' : ''}`}
+                      onClick={() => setActiveTabA('interface')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'A')}
+                    >
+                      <ImageIcon size={14} /> Interface & App Preview
+                    </button>
+                    <button 
+                      id="tab-a-repro"
+                      role="tab"
+                      aria-selected={activeTabA === 'repro'}
+                      aria-controls="panel-a-repro"
+                      tabIndex={activeTabA === 'repro' ? 0 : -1}
+                      className={`tab-btn ${activeTabA === 'repro' ? 'active' : ''}`}
+                      onClick={() => setActiveTabA('repro')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'A')}
+                    >
+                      <Terminal size={14} /> Reproduction & CI (35 Tests)
+                    </button>
+                  </div>
                 </div>
 
                 <div className="case-body">
                   {activeTabA === 'lifecycle' && (
-                    <div>
+                    <div role="tabpanel" id="panel-a-lifecycle" aria-labelledby="tab-a-lifecycle" tabIndex={0}>
                       <div className="metrics-grid">
                         <div className="metric-box">
                           <div className="metric-label">Target Classes</div>
@@ -390,7 +463,7 @@ export default function App() {
                   )}
 
                   {activeTabA === 'quality-gate' && (
-                    <div>
+                    <div role="tabpanel" id="panel-a-quality-gate" aria-labelledby="tab-a-quality-gate" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Automated Gate Validation & Rollback Protection
                       </h4>
@@ -441,7 +514,7 @@ export default function App() {
                   )}
 
                   {activeTabA === 'metrics' && (
-                    <div>
+                    <div role="tabpanel" id="panel-a-metrics" aria-labelledby="tab-a-metrics" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Baseline Benchmark Metrics (1,629 Validation Images)
                       </h4>
@@ -504,7 +577,7 @@ export default function App() {
                   )}
 
                   {activeTabA === 'interface' && (
-                    <div>
+                    <div role="tabpanel" id="panel-a-interface" aria-labelledby="tab-a-interface" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Streamlit Application Interface & Inference Preview
                       </h4>
@@ -544,7 +617,7 @@ export default function App() {
                   )}
 
                   {activeTabA === 'repro' && (
-                    <div>
+                    <div role="tabpanel" id="panel-a-repro" aria-labelledby="tab-a-repro" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Local Reproduction & Automated Testing
                       </h4>
@@ -616,56 +689,86 @@ streamlit run app/main.py`}</pre>
                 </div>
 
                 {/* Case Study Tabs */}
-                <div className="case-tabs">
-                  <button 
-                    className={`tab-btn ${activeTabB === 'imbalanced' ? 'active' : ''}`}
-                    onClick={() => setActiveTabB('imbalanced')}
+                <div className="case-tabs-wrapper">
+                  <div 
+                    className="case-tabs"
+                    role="tablist"
+                    aria-label="FraudGuard AI Case Study Sections"
                   >
-                    <BarChart3 size={14} /> Imbalanced Learning & Metrics
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabB === 'thresholds' ? 'active' : ''}`}
-                    onClick={() => setActiveTabB('thresholds')}
-                  >
-                    <ShieldAlert size={14} /> Threshold Tuning & Confusion Matrix
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabB === 'api' ? 'active' : ''}`}
-                    onClick={() => setActiveTabB('api')}
-                  >
-                    <Server size={14} /> FastAPI & Drift Monitoring
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabB === 'repro' ? 'active' : ''}`}
-                    onClick={() => setActiveTabB('repro')}
-                  >
-                    <Terminal size={14} /> Reproduction & CI (33 Tests)
-                  </button>
+                    <button 
+                      id="tab-b-imbalanced"
+                      role="tab"
+                      aria-selected={activeTabB === 'imbalanced'}
+                      aria-controls="panel-b-imbalanced"
+                      tabIndex={activeTabB === 'imbalanced' ? 0 : -1}
+                      className={`tab-btn ${activeTabB === 'imbalanced' ? 'active' : ''}`}
+                      onClick={() => setActiveTabB('imbalanced')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'B')}
+                    >
+                      <BarChart3 size={14} /> Imbalanced Learning & Metrics
+                    </button>
+                    <button 
+                      id="tab-b-thresholds"
+                      role="tab"
+                      aria-selected={activeTabB === 'thresholds'}
+                      aria-controls="panel-b-thresholds"
+                      tabIndex={activeTabB === 'thresholds' ? 0 : -1}
+                      className={`tab-btn ${activeTabB === 'thresholds' ? 'active' : ''}`}
+                      onClick={() => setActiveTabB('thresholds')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'B')}
+                    >
+                      <ShieldAlert size={14} /> Threshold Tuning & Confusion Matrix
+                    </button>
+                    <button 
+                      id="tab-b-api"
+                      role="tab"
+                      aria-selected={activeTabB === 'api'}
+                      aria-controls="panel-b-api"
+                      tabIndex={activeTabB === 'api' ? 0 : -1}
+                      className={`tab-btn ${activeTabB === 'api' ? 'active' : ''}`}
+                      onClick={() => setActiveTabB('api')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'B')}
+                    >
+                      <Server size={14} /> FastAPI & Drift Monitoring
+                    </button>
+                    <button 
+                      id="tab-b-repro"
+                      role="tab"
+                      aria-selected={activeTabB === 'repro'}
+                      aria-controls="panel-b-repro"
+                      tabIndex={activeTabB === 'repro' ? 0 : -1}
+                      className={`tab-btn ${activeTabB === 'repro' ? 'active' : ''}`}
+                      onClick={() => setActiveTabB('repro')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'B')}
+                    >
+                      <Terminal size={14} /> Reproduction & CI (33 Tests)
+                    </button>
+                  </div>
                 </div>
 
                 <div className="case-body">
                   {activeTabB === 'imbalanced' && (
-                    <div>
+                    <div role="tabpanel" id="panel-b-imbalanced" aria-labelledby="tab-b-imbalanced" tabIndex={0}>
                       <div className="metrics-grid">
                         <div className="metric-box">
-                          <div className="metric-label">Dataset Scale</div>
+                          <div className="metric-label">Dataset & Partitions</div>
                           <div className="metric-value">284,807</div>
-                          <div className="metric-subtext">492 frauds (0.1727% prevalence)</div>
+                          <div className="metric-subtext">492 frauds (0.1727%) &bull; 60% Train / 20% Val / 20% Test</div>
                         </div>
                         <div className="metric-box">
-                          <div className="metric-label">Test PR-AUC</div>
+                          <div className="metric-label">Val Tuning Split (56,962 txns)</div>
+                          <div className="metric-value">0.7693 / 0.8280</div>
+                          <div className="metric-subtext">Val PR-AUC / Val F1 at tuned T = 0.43</div>
+                        </div>
+                        <div className="metric-box">
+                          <div className="metric-label">Held-Out Test PR-AUC</div>
                           <div className="metric-value highlight">0.8140</div>
-                          <div className="metric-subtext">Held-out test (56,962 transactions)</div>
+                          <div className="metric-subtext">56,962 unseen test txns &bull; ROC-AUC 0.9717</div>
                         </div>
                         <div className="metric-box">
-                          <div className="metric-label">False Positive Rate</div>
-                          <div className="metric-value highlight">0.033%</div>
-                          <div className="metric-subtext">19 false alarms across 56,864 negatives</div>
-                        </div>
-                        <div className="metric-box">
-                          <div className="metric-label">Test Precision / Recall</div>
-                          <div className="metric-value">80.8% / 81.6%</div>
-                          <div className="metric-subtext">At tuned validation threshold T = 0.43</div>
+                          <div className="metric-label">Held-Out Test Precision / Recall</div>
+                          <div className="metric-value highlight">80.81% / 81.63%</div>
+                          <div className="metric-subtext">FPR: 0.0334% (19 false alarms / 56,864 negatives)</div>
                         </div>
                       </div>
 
@@ -696,12 +799,12 @@ streamlit run app/main.py`}</pre>
                   )}
 
                   {activeTabB === 'thresholds' && (
-                    <div>
+                    <div role="tabpanel" id="panel-b-thresholds" aria-labelledby="tab-b-thresholds" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Decision Threshold Optimization & Split Comparison
                       </h4>
                       <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-                        Decision thresholds were tuned strictly on validation data to maximize F1-score without evaluation leakage, then evaluated against held-out test sets.
+                        To prevent optimistic evaluation leakage, decision thresholds were tuned exclusively on the 20% validation split (56,962 transactions) to maximize validation F1-score. Final performance was then independently evaluated against the 20% held-out test split (56,962 transactions):
                       </p>
 
                       <div className="data-table-wrapper">
@@ -710,18 +813,20 @@ streamlit run app/main.py`}</pre>
                             <tr>
                               <th>Split Strategy</th>
                               <th>Tuned Threshold</th>
-                              <th>Test PR-AUC</th>
-                              <th>Test ROC-AUC</th>
-                              <th>Precision</th>
-                              <th>Recall</th>
-                              <th>False Positive Rate</th>
-                              <th>Test Confusion Matrix</th>
+                              <th>Val Tuning Split (Val PR-AUC / Val F1)</th>
+                              <th>Held-Out Test PR-AUC</th>
+                              <th>Held-Out Test ROC-AUC</th>
+                              <th>Test Precision</th>
+                              <th>Test Recall</th>
+                              <th>Test FPR</th>
+                              <th>Held-Out Test Confusion Matrix</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr className="champion-row">
-                              <td>Stratified Split (60/20/20)</td>
+                              <td>Stratified Split (60/20/20) [Champion]</td>
                               <td>0.43</td>
+                              <td>0.7693 / 0.8280</td>
                               <td>0.8140</td>
                               <td>0.9717</td>
                               <td>80.81%</td>
@@ -730,8 +835,9 @@ streamlit run app/main.py`}</pre>
                               <td>TP: 80 | FP: 19 | TN: 56,845 | FN: 18</td>
                             </tr>
                             <tr>
-                              <td>Chronological Split (Temporal)</td>
+                              <td>Chronological Split (Temporal Ordering)</td>
                               <td>0.34</td>
+                              <td>0.7508 / 0.8350</td>
                               <td>0.8151</td>
                               <td>0.9547</td>
                               <td>89.06%</td>
@@ -742,6 +848,7 @@ streamlit run app/main.py`}</pre>
                             <tr>
                               <td>Logistic Regression Baseline</td>
                               <td>0.95</td>
+                              <td>0.6942 / 0.4412</td>
                               <td>0.7168</td>
                               <td>0.9724</td>
                               <td>30.00%</td>
@@ -754,10 +861,10 @@ streamlit run app/main.py`}</pre>
                       </div>
 
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginTop: '24px', marginBottom: '8px' }}>
-                        Verified Test Confusion Matrix (56,962 Transactions at T = 0.43)
+                        Verified Held-Out Test Confusion Matrix (56,962 Transactions at T = 0.43)
                       </h4>
                       <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                        Out of 56,864 legitimate transactions, only 19 produced false alarms (0.0334% FPR), while capturing 80 out of 98 fraud events (81.63% recall):
+                        Evaluated on the unseen 20% test partition: across 56,864 negative transactions, only 19 produced false alarms (0.0334% FPR), while capturing 80 out of 98 fraud events (81.63% recall).
                       </p>
 
                       <div className="confusion-matrix-grid">
@@ -790,13 +897,13 @@ streamlit run app/main.py`}</pre>
                         <div className="decision-card">
                           <h4><CheckCircle2 size={16} color="var(--accent-leaf)" /> Temporal Shift Resilience</h4>
                           <p>
-                            In the chronological split (training on the first 60% of timeline, testing on the last 20%), the model produced only 7 false alarms across 56,886 legitimate transactions while capturing 76% of frauds, demonstrating robustness against evolving spending patterns.
+                            In the chronological split (training on the first 60% of timeline, testing on the last 20%), the model produced only 7 false alarms across 56,886 legitimate transactions while capturing 76.00% of frauds (Test PR-AUC 0.8151), demonstrating robustness against evolving spending patterns.
                           </p>
                         </div>
                         <div className="decision-card">
-                          <h4><ShieldAlert size={16} color="var(--accent-leaf)" /> Distinguishing Val vs Test</h4>
+                          <h4><ShieldAlert size={16} color="var(--accent-leaf)" /> Strict Val vs. Test Separation</h4>
                           <p>
-                            Validation threshold selection ($T=0.43$) is maintained strictly separate from test evaluation. The reported 80.81% precision and 81.63% recall are verified test-partition results, not optimistic validation scores.
+                            Decision thresholds ($T=0.43$ stratified, $T=0.34$ chronological) were tuned exclusively on the 20% validation partition (56,962 txns) to maximize validation F1. All reported Precision (80.81%), Recall (81.63%), and PR-AUC (0.8140) are verified on the independent held-out test partition.
                           </p>
                         </div>
                       </div>
@@ -804,7 +911,7 @@ streamlit run app/main.py`}</pre>
                   )}
 
                   {activeTabB === 'api' && (
-                    <div>
+                    <div role="tabpanel" id="panel-b-api" aria-labelledby="tab-b-api" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Production Serving Architecture & Drift Telemetry
                       </h4>
@@ -835,7 +942,7 @@ streamlit run app/main.py`}</pre>
                   )}
 
                   {activeTabB === 'repro' && (
-                    <div>
+                    <div role="tabpanel" id="panel-b-repro" aria-labelledby="tab-b-repro" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Reproduction & CI Test Suite (33 Tests, 100% Pass)
                       </h4>
@@ -910,36 +1017,66 @@ streamlit run src/dashboard/app.py`}</pre>
                 </div>
 
                 {/* Case Study Tabs */}
-                <div className="case-tabs">
-                  <button 
-                    className={`tab-btn ${activeTabC === 'nlp' ? 'active' : ''}`}
-                    onClick={() => setActiveTabC('nlp')}
+                <div className="case-tabs-wrapper">
+                  <div 
+                    className="case-tabs"
+                    role="tablist"
+                    aria-label="IMDb Sentiment Analysis Platform Case Study Sections"
                   >
-                    <Code2 size={14} /> NLP Pipeline & Negation
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabC === 'benchmarks' ? 'active' : ''}`}
-                    onClick={() => setActiveTabC('benchmarks')}
-                  >
-                    <BarChart3 size={14} /> Model Benchmarks
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabC === 'api' ? 'active' : ''}`}
-                    onClick={() => setActiveTabC('api')}
-                  >
-                    <Server size={14} /> FastAPI & Docker Serving
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTabC === 'repro' ? 'active' : ''}`}
-                    onClick={() => setActiveTabC('repro')}
-                  >
-                    <Terminal size={14} /> Reproduction & Commands
-                  </button>
+                    <button 
+                      id="tab-c-nlp"
+                      role="tab"
+                      aria-selected={activeTabC === 'nlp'}
+                      aria-controls="panel-c-nlp"
+                      tabIndex={activeTabC === 'nlp' ? 0 : -1}
+                      className={`tab-btn ${activeTabC === 'nlp' ? 'active' : ''}`}
+                      onClick={() => setActiveTabC('nlp')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'C')}
+                    >
+                      <Code2 size={14} /> NLP Pipeline & Negation
+                    </button>
+                    <button 
+                      id="tab-c-benchmarks"
+                      role="tab"
+                      aria-selected={activeTabC === 'benchmarks'}
+                      aria-controls="panel-c-benchmarks"
+                      tabIndex={activeTabC === 'benchmarks' ? 0 : -1}
+                      className={`tab-btn ${activeTabC === 'benchmarks' ? 'active' : ''}`}
+                      onClick={() => setActiveTabC('benchmarks')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'C')}
+                    >
+                      <BarChart3 size={14} /> Model Benchmarks
+                    </button>
+                    <button 
+                      id="tab-c-api"
+                      role="tab"
+                      aria-selected={activeTabC === 'api'}
+                      aria-controls="panel-c-api"
+                      tabIndex={activeTabC === 'api' ? 0 : -1}
+                      className={`tab-btn ${activeTabC === 'api' ? 'active' : ''}`}
+                      onClick={() => setActiveTabC('api')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'C')}
+                    >
+                      <Server size={14} /> FastAPI & Docker Serving
+                    </button>
+                    <button 
+                      id="tab-c-repro"
+                      role="tab"
+                      aria-selected={activeTabC === 'repro'}
+                      aria-controls="panel-c-repro"
+                      tabIndex={activeTabC === 'repro' ? 0 : -1}
+                      className={`tab-btn ${activeTabC === 'repro' ? 'active' : ''}`}
+                      onClick={() => setActiveTabC('repro')}
+                      onKeyDown={(e) => handleTabKeyDown(e, 'C')}
+                    >
+                      <Terminal size={14} /> Reproduction & Commands
+                    </button>
+                  </div>
                 </div>
 
                 <div className="case-body">
                   {activeTabC === 'nlp' && (
-                    <div>
+                    <div role="tabpanel" id="panel-c-nlp" aria-labelledby="tab-c-nlp" tabIndex={0}>
                       <div className="metrics-grid">
                         <div className="metric-box">
                           <div className="metric-label">Dataset Scale</div>
@@ -989,7 +1126,7 @@ streamlit run src/dashboard/app.py`}</pre>
                   )}
 
                   {activeTabC === 'benchmarks' && (
-                    <div>
+                    <div role="tabpanel" id="panel-c-benchmarks" aria-labelledby="tab-c-benchmarks" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Multi-Model Benchmark Comparison (9,917 Held-Out Reviews)
                       </h4>
@@ -1056,7 +1193,7 @@ streamlit run src/dashboard/app.py`}</pre>
                   )}
 
                   {activeTabC === 'api' && (
-                    <div>
+                    <div role="tabpanel" id="panel-c-api" aria-labelledby="tab-c-api" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         FastAPI REST Backend & Container Deployment
                       </h4>
@@ -1092,7 +1229,7 @@ streamlit run src/dashboard/app.py`}</pre>
                   )}
 
                   {activeTabC === 'repro' && (
-                    <div>
+                    <div role="tabpanel" id="panel-c-repro" aria-labelledby="tab-c-repro" tabIndex={0}>
                       <h4 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Local Reproduction & Execution Guide
                       </h4>
@@ -1462,7 +1599,7 @@ docker run -p 8000:8000 -p 8501:8501 sentiment-analysis-app`}</pre>
                 I am actively seeking machine learning engineering, MLOps, and backend software roles where I can contribute to reliable, production-ready systems.
               </p>
 
-              <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '14px', marginBottom: '24px' }}>
+              <div className="contact-actions" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '14px', marginBottom: '24px' }}>
                 <a 
                   href="mailto:stevesamuel.cse@gmail.com" 
                   className="btn btn-primary"
